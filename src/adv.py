@@ -1,5 +1,6 @@
 from room import Room
-
+from player import Player
+from textwrap import fill
 # Declare all the rooms
 
 room = {
@@ -33,11 +34,18 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
+def location(player, prev_room = ''):
+    if player.room.name != prev_room:
+        print(f"player is in room: {player.room.name}\n{fill(player.room.desc, 50)}")
+
+
 #
 # Main
 #
 
 # Make a new player object that is currently in the 'outside' room.
+
+player = Player('loser', room['outside'])
 
 # Write a loop that:
 #
@@ -49,3 +57,26 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+
+directions = {
+    'n': 'n_to',
+    'e': 'e_to',
+    's': 's_to',
+    'w': 'w_to',
+    }
+
+location(player)
+
+while True:
+    
+    cmd = input('(n/f/s/w) ->')
+    direction = direction[cmd]
+
+    if direction.get(cmd):
+        prev_room = player.room.name
+        player.room = player.room.move(direction)
+        location(player, prev_room);
+    elif cmd == 'q':
+        break
+    else:
+        print('\nINVALID COMMAND\n')
