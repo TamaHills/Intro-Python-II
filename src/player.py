@@ -1,12 +1,13 @@
 # Write a class to hold player information, e.g. what room they are in
 # currently.
-from colors import BLUE, GREEN, RED, BOLD, UNDERLINE, END
+from colors import BLUE, GREEN, RED, BOLD, UNDERLINE, YELLOW, END
 
 class Player:
     def __init__(self, name, room):
         self.room = room
         self.name = name
         self.inventory = []
+
     def __repr__(self):
         name = f'Name: {BOLD}{self.name}{END}'
         inventory_header = f'{BOLD}{UNDERLINE}Inventory:{END}'
@@ -15,7 +16,8 @@ class Player:
         inventory_string = str().join(inventory)
 
         return f'{name}\n{inventory_header}\n{inventory_string}'
-    def get(self, item):
+
+    def take(self, item):
         if item in self.room.items:
             self.room.items.remove(item)
             self.inventory.append(item)

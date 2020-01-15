@@ -8,7 +8,7 @@ from colors import BLUE, GREEN, RED, BOLD, UNDERLINE, END
 items = {
     'torch': Item('torch', 'a lit torch'),
     'coins': Item('coins', 'a small bag o\'coins'),
-
+    'pickles': Item('pickles', 'a jar of fancy pickles')
 }
 
 # Declare all the rooms
@@ -17,7 +17,10 @@ rooms = {
                      "North of you, the cave mouth beckons", [items['torch']]),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
+passages run north and east. To the west there is a large kitchen"""),
+
+    'kitchen':    Room("Kitchen", """A huge fancy man kitchen. 
+The nothern side contains a masive pantry. Heading east returns to the foyer.""", [items['pickles']]),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
@@ -28,7 +31,7 @@ to north. The smell of gold permeates the air."""),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
+earlier adventurers. The only exit is to the south.""", ),
 }
 
 
@@ -38,6 +41,8 @@ rooms['outside'].n_to = rooms['foyer']
 rooms['foyer'].s_to = rooms['outside']
 rooms['foyer'].n_to = rooms['overlook']
 rooms['foyer'].e_to = rooms['narrow']
+rooms['foyer'].w_to = rooms['kitchen']
+rooms['kitchen'].e_to = rooms['foyer']
 rooms['overlook'].s_to = rooms['foyer']
 rooms['narrow'].w_to = rooms['foyer']
 rooms['narrow'].n_to = rooms['treasure']
@@ -61,8 +66,8 @@ def parse_cmd(verb, object=None, *args):
         prev_room = player.room
         player.room = prev_room.next_room(direction)
 
-    elif verb == 'get' and item:
-        player.get(item)
+    elif verb == 'take' and item:
+        player.take(item)
 
     elif verb == 'drop' and item:
         player.drop(item)
@@ -115,7 +120,6 @@ while True:
     words = cmd.split(' ')
     clear()
     # eval
-    
     parse_cmd(*words)
     # print
     print(player)
