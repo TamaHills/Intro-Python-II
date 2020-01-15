@@ -5,15 +5,12 @@ from player import Player
 from textwrap import fill
 
 # helpers to control console output
-class bgcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+BLUE = '\033[94m'
+GREEN = '\033[92m'
+RED = '\033[91m'
+BOLD = '\033[1m'
+UNDERLINE = '\033[4m'
+END = '\033[0m'
 
 # clear console output
 def clear():
@@ -25,13 +22,14 @@ def clear():
 
 # print player location
 def location(player):
-    print(f"location: {player.room.name}\n{fill(player.room.desc, 50)}")
+    print(f"location: {BOLD}{player.room.name}{END}\n")
+    print(f"{GREEN}{fill(player.room.desc, 50)}{END}\n")
 
 
 # Declare all the rooms
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mouth beckons"),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east."""),
@@ -90,14 +88,13 @@ directions = {
 
 clear()
 
-print(f'\n{bgcolors.OKBLUE}Welcome to the Adventure{bgcolors.ENDC}\n')
+print(f'\n{BLUE}{UNDERLINE}{BOLD}Welcome to the Adventure{END}\n')
 
 location(player)
 
 while True:
-    
-    cmd = input('(n/f/s/w) ->')
-    direction = directions.get(cmd)
+    cmd = input(f'{BOLD}Enter a direction (n/e/s/w) or \'q\' to quit.\n--> {END}')
+    direction = directions.get(cmd.lower())
 
     if direction:
         clear()
@@ -105,8 +102,10 @@ while True:
         player.room = prev_room.next_room(direction)
         location(player)
     elif cmd == 'q':
-        print('\nTHANKS FOR PLAYING\n')
+        clear()
+        print(f'\n{BLUE}{UNDERLINE}{BOLD}THANKS FOR PLAYING!{END}\n')
         break
     else:
-        print('\nINVALID COMMAND\n')
         clear()
+        print(f'\n{RED}{BOLD}INVALID COMMAND\n{END}')
+        location(player)

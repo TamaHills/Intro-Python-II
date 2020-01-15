@@ -14,6 +14,6 @@ class Room:
         new_room = self.__getattribute__(direction)
 
         if new_room == self:
-            print("\033[91m\nYOU CAN'T GO THAT DIRECTION\n\033[0m")
+            print("\033[91m\033[1m\nYOU CAN'T GO THAT DIRECTION\n\033[0m")
         
-        return new_room
+        return new_room 
