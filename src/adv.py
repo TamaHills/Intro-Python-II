@@ -50,6 +50,7 @@ BOLD = '\033[1m'
 UNDERLINE = '\033[4m'
 END = '\033[0m'
 
+
 # clear console output
 def clear():
     platform = sys.platform
@@ -57,6 +58,7 @@ def clear():
         os.system('cls')
     else:
         os.system('clear')
+
 
 # print player location
 def player_info(player):
@@ -71,34 +73,28 @@ def player_info(player):
     print(f'{BOLD}{UNDERLINE}Items:{END}')
     for item in player.room.items:
         print(f'    *{BOLD}{item.name}{END} - {item.desc}')
-    
-def parse_verb(cmd, object_name=None):
-    direction = directions.get(cmd.lower())
-    object = items.get(object_name)
+
+
+def parse_cmd(verb, object=None,*args):
+    direction = directions.get(verb.lower())
+    item = items.get(object)
+
     if direction:
-        clear()
         prev_room = player.room
         player.room = prev_room.next_room(direction)
 
-    elif cmd == 'get' and object:
-        player.room.items.remove(object)
-        player.inventory.append(object)
-        clear()
+    elif verb == 'get' and item:
+        player.get(item)
 
-    elif cmd == 'drop' and object:
-        player.inventory.remove(object)
-        player.room.items.append(object)
-        clear()
+    elif verb == 'drop' and item:
+        player.drop(item)
 
-    elif cmd == 'q':
-        clear()
+    elif verb == 'q':
         print(f'\n{BLUE}{UNDERLINE}{BOLD}THANKS FOR PLAYING!{END}\n')
         exit()
+
     else:
-        clear()
         print(f'\n{RED}{BOLD}INVALID COMMAND\n{END}')
-
-
 
 
 
@@ -129,16 +125,19 @@ directions = {
     }
 
 clear()
-
 print(f'\n{BLUE}{UNDERLINE}{BOLD}Welcome to the Adventure{END}\n')
 
 player_info(player)
 
+
 while True:
+    # read
     cmd = input(f'{BOLD}Enter a direction (n/e/s/w) or \'q\' to quit.\n--> {END}')
     words = cmd.split(' ')
-    print(words)
-    parse_verb(*words)
-    player_info(player)
-        
+    clear()
+    # eval
     
+    parse_cmd(*words)
+    # print
+    player_info(player)
+    # loop
