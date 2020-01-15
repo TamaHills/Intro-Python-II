@@ -1,8 +1,34 @@
+import os
+import sys
 from room import Room
 from player import Player
 from textwrap import fill
-# Declare all the rooms
 
+# helpers to control console output
+class bgcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+# clear console output
+def clear():
+    platform = sys.platform
+    if platform == 'win32':
+        os.system('cls')
+    else:
+        os.system('clear')
+
+# print player location
+def location(player):
+    print(f"location: {player.room.name}\n{fill(player.room.desc, 50)}")
+
+
+# Declare all the rooms
 room = {
     'outside':  Room("Outside Cave Entrance",
                      "North of you, the cave mount beckons"),
@@ -34,9 +60,7 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
-def location(player, prev_room = ''):
-    if player.room.name != prev_room:
-        print(f"player is in room: {player.room.name}\n{fill(player.room.desc, 50)}")
+
 
 
 #
@@ -44,8 +68,7 @@ def location(player, prev_room = ''):
 #
 
 # Make a new player object that is currently in the 'outside' room.
-
-player = Player('loser', room['outside'])
+player = Player('adventurer', room['outside'])
 
 # Write a loop that:
 #
@@ -65,18 +88,25 @@ directions = {
     'w': 'w_to',
     }
 
+clear()
+
+print(f'\n{bgcolors.OKBLUE}Welcome to the Adventure{bgcolors.ENDC}\n')
+
 location(player)
 
 while True:
     
     cmd = input('(n/f/s/w) ->')
-    direction = direction[cmd]
+    direction = directions.get(cmd)
 
-    if direction.get(cmd):
-        prev_room = player.room.name
-        player.room = player.room.move(direction)
-        location(player, prev_room);
+    if direction:
+        clear()
+        prev_room = player.room
+        player.room = prev_room.next_room(direction)
+        location(player)
     elif cmd == 'q':
+        print('\nTHANKS FOR PLAYING\n')
         break
     else:
         print('\nINVALID COMMAND\n')
+        clear()

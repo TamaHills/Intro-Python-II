@@ -9,9 +9,11 @@ class Room:
         self.e_to = self
         self.s_to = self
         self.w_to = self
-    def move(self, direction):
+
+    def next_room(self, direction):
         new_room = self.__getattribute__(direction)
+
         if new_room == self:
-            print("you can't move that direction")
-            
+            print("\033[91m\nYOU CAN'T GO THAT DIRECTION\n\033[0m")
+        
         return new_room
