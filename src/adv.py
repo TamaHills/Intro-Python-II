@@ -5,32 +5,14 @@ from item import Item
 from player import Player
 from textwrap import fill
 
-# helpers to control console output
-BLUE = '\033[94m'
-GREEN = '\033[92m'
-RED = '\033[91m'
-BOLD = '\033[1m'
-UNDERLINE = '\033[4m'
-END = '\033[0m'
-
-# clear console output
-def clear():
-    platform = sys.platform
-    if platform == 'win32':
-        os.system('cls')
-    else:
-        os.system('clear')
-
-# print player location
-def location(player):
-    print(f"location: {BOLD}{player.room.name}{END}\n")
-    print(f"{GREEN}{fill(player.room.desc)}{END}\n")
-
+items = {
+    'torch': Item('torch', 'a lit torch'),
+}
 
 # Declare all the rooms
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mouth beckons"),
+                     "North of you, the cave mouth beckons", [items['torch']]),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east."""),
@@ -60,6 +42,64 @@ room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
 
+# helpers to control console output
+BLUE = '\033[94m'
+GREEN = '\033[92m'
+RED = '\033[91m'
+BOLD = '\033[1m'
+UNDERLINE = '\033[4m'
+END = '\033[0m'
+
+# clear console output
+def clear():
+    platform = sys.platform
+    if platform == 'win32':
+        os.system('cls')
+    else:
+        os.system('clear')
+
+# print player location
+def player_info(player):
+    print(f'Name: {BOLD}{player.name}{END}')
+    print(f'{BOLD}{UNDERLINE}Inventory:{END}')
+    for item in player.inventory:
+        print(f'    *{BOLD}{item.name}{END} - {item.desc}')
+
+    print(f'\nlocation: {BOLD}{player.room.name}{END}\n')
+    print(f'{GREEN}{fill(player.room.desc)}{END}\n')
+
+    print(f'{BOLD}{UNDERLINE}Items:{END}')
+    for item in player.room.items:
+        print(f'    *{BOLD}{item.name}{END} - {item.desc}')
+    
+def parse_verb(cmd, object_name=None):
+    direction = directions.get(cmd.lower())
+    object = items.get(object_name)
+    if direction:
+        clear()
+        prev_room = player.room
+        player.room = prev_room.next_room(direction)
+
+    elif cmd == 'get' and object:
+        player.room.items.remove(object)
+        player.inventory.append(object)
+        clear()
+
+    elif cmd == 'drop' and object:
+        player.inventory.remove(object)
+        player.room.items.append(object)
+        clear()
+
+    elif cmd == 'q':
+        clear()
+        print(f'\n{BLUE}{UNDERLINE}{BOLD}THANKS FOR PLAYING!{END}\n')
+        exit()
+    else:
+        clear()
+        print(f'\n{RED}{BOLD}INVALID COMMAND\n{END}')
+
+
+
 
 
 #
@@ -67,7 +107,8 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
-player = Player('adventurer', room['outside'])
+clear()
+player = Player(input(f'{BOLD}enter a name: {END}'), room['outside'])
 
 # Write a loop that:
 #
@@ -91,22 +132,13 @@ clear()
 
 print(f'\n{BLUE}{UNDERLINE}{BOLD}Welcome to the Adventure{END}\n')
 
-location(player)
+player_info(player)
 
 while True:
     cmd = input(f'{BOLD}Enter a direction (n/e/s/w) or \'q\' to quit.\n--> {END}')
-    direction = directions.get(cmd.lower())
-
-    if direction:
-        clear()
-        prev_room = player.room
-        player.room = prev_room.next_room(direction)
-        location(player)
-    elif cmd == 'q':
-        clear()
-        print(f'\n{BLUE}{UNDERLINE}{BOLD}THANKS FOR PLAYING!{END}\n')
-        break
-    else:
-        clear()
-        print(f'\n{RED}{BOLD}INVALID COMMAND\n{END}')
-        location(player)
+    words = cmd.split(' ')
+    print(words)
+    parse_verb(*words)
+    player_info(player)
+        
+    

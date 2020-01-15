@@ -2,14 +2,15 @@
 # description attributes.
 
 class Room:
-    def __init__(self, name, desc):
+    def __init__(self, name, desc, items = []):
         self.name = name
         self.desc = desc
         self.n_to = self
         self.e_to = self
         self.s_to = self
         self.w_to = self
-
+        
+        self.items = items
     def next_room(self, direction):
         new_room = self.__getattribute__(direction)
 
