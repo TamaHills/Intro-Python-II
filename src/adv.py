@@ -3,14 +3,16 @@ import sys
 from room import Room
 from item import Item
 from player import Player
-from textwrap import fill
+from colors import BLUE, GREEN, RED, BOLD, UNDERLINE, END
 
 items = {
     'torch': Item('torch', 'a lit torch'),
+    'coins': Item('coins', 'a small bag o\'coins'),
+
 }
 
 # Declare all the rooms
-room = {
+rooms = {
     'outside':  Room("Outside Cave Entrance",
                      "North of you, the cave mouth beckons", [items['torch']]),
 
@@ -19,7 +21,7 @@ passages run north and east."""),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
+the distance, but there is no way across the chasm.""", [items['coins']]),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
 to north. The smell of gold permeates the air."""),
@@ -32,23 +34,14 @@ earlier adventurers. The only exit is to the south."""),
 
 # Link rooms together
 
-room['outside'].n_to = room['foyer']
-room['foyer'].s_to = room['outside']
-room['foyer'].n_to = room['overlook']
-room['foyer'].e_to = room['narrow']
-room['overlook'].s_to = room['foyer']
-room['narrow'].w_to = room['foyer']
-room['narrow'].n_to = room['treasure']
-room['treasure'].s_to = room['narrow']
-
-
-# helpers to control console output
-BLUE = '\033[94m'
-GREEN = '\033[92m'
-RED = '\033[91m'
-BOLD = '\033[1m'
-UNDERLINE = '\033[4m'
-END = '\033[0m'
+rooms['outside'].n_to = rooms['foyer']
+rooms['foyer'].s_to = rooms['outside']
+rooms['foyer'].n_to = rooms['overlook']
+rooms['foyer'].e_to = rooms['narrow']
+rooms['overlook'].s_to = rooms['foyer']
+rooms['narrow'].w_to = rooms['foyer']
+rooms['narrow'].n_to = rooms['treasure']
+rooms['treasure'].s_to = rooms['narrow']
 
 
 # clear console output
@@ -58,24 +51,9 @@ def clear():
         os.system('cls')
     else:
         os.system('clear')
+    
 
-
-# print player location
-def player_info(player):
-    print(f'Name: {BOLD}{player.name}{END}')
-    print(f'{BOLD}{UNDERLINE}Inventory:{END}')
-    for item in player.inventory:
-        print(f'    *{BOLD}{item.name}{END} - {item.desc}')
-
-    print(f'\nlocation: {BOLD}{player.room.name}{END}\n')
-    print(f'{GREEN}{fill(player.room.desc)}{END}\n')
-
-    print(f'{BOLD}{UNDERLINE}Items:{END}')
-    for item in player.room.items:
-        print(f'    *{BOLD}{item.name}{END} - {item.desc}')
-
-
-def parse_cmd(verb, object=None,*args):
+def parse_cmd(verb, object=None, *args):
     direction = directions.get(verb.lower())
     item = items.get(object)
 
@@ -94,7 +72,7 @@ def parse_cmd(verb, object=None,*args):
         exit()
 
     else:
-        print(f'\n{RED}{BOLD}INVALID COMMAND\n{END}')
+        print(f'\n{RED}{UNDERLINE}{BOLD}INVALID COMMAND\n{END}')
 
 
 
@@ -104,7 +82,7 @@ def parse_cmd(verb, object=None,*args):
 
 # Make a new player object that is currently in the 'outside' room.
 clear()
-player = Player(input(f'{BOLD}enter a name: {END}'), room['outside'])
+player = Player(input(f'{BOLD}enter a name: {END}'), rooms['outside'])
 
 # Write a loop that:
 #
@@ -127,7 +105,8 @@ directions = {
 clear()
 print(f'\n{BLUE}{UNDERLINE}{BOLD}Welcome to the Adventure{END}\n')
 
-player_info(player)
+print(player)
+print(player.room)
 
 
 while True:
@@ -139,5 +118,6 @@ while True:
     
     parse_cmd(*words)
     # print
-    player_info(player)
+    print(player)
+    print(player.room)
     # loop

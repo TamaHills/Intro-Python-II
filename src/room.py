@@ -1,5 +1,8 @@
 # Implement a class to hold room information. This should have name and
 # description attributes.
+from textwrap import fill
+
+from colors import BLUE, GREEN, RED, BOLD, UNDERLINE, END
 
 class Room:
     def __init__(self, name, desc, items = []):
@@ -11,10 +14,22 @@ class Room:
         self.w_to = self
         
         self.items = items
+    def __repr__(self):
+        location = f'location: {BOLD}{self.name}{END}'
+        desc = f'{GREEN}{fill(self.desc)}{END}\n'
+        item_header = f'{BOLD}{UNDERLINE}Items:{END}'
+
+        info_string = f'{location}\n{desc}\n{item_header}\n'
+        
+        items = [ f'    *{BOLD}{item.name}{END} - {item.desc} \n' for item in self.items]
+        item_string = str().join(items)
+        
+        return f'{info_string}{item_string}'
+
     def next_room(self, direction):
         new_room = self.__getattribute__(direction)
 
         if new_room == self:
-            print("\033[91m\033[1m\nYOU CAN'T GO THAT DIRECTION\n\033[0m")
+            print(f"{RED}{BOLD}\nYOU CAN'T GO THAT DIRECTION\n{END}")
         
         return new_room 
