@@ -1,6 +1,7 @@
 import os
 import sys
 from room import Room
+from item import Item
 from player import Player
 from textwrap import fill
 
@@ -23,7 +24,7 @@ def clear():
 # print player location
 def location(player):
     print(f"location: {BOLD}{player.room.name}{END}\n")
-    print(f"{GREEN}{fill(player.room.desc, 50)}{END}\n")
+    print(f"{GREEN}{fill(player.room.desc)}{END}\n")
 
 
 # Declare all the rooms
