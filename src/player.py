@@ -9,13 +9,12 @@ class Player:
         self.inventory = []
 
     def __repr__(self):
-        name = f'Name: {BOLD}{self.name}{END}'
-        inventory_header = f'{BOLD}{UNDERLINE}Inventory:{END}'
+        name = f'Name: {BOLD}{self.name}{END}\n'
         
-        inventory = [f'    *{BOLD}{item.name}{END} - {item.desc}\n' for item in self.inventory]
-        inventory_string = str().join(inventory)
+        inventory_header = f'{BOLD}{UNDERLINE}Inventory:{END}\n'
+        inventory_string = str().join([ f'{item}' for item in self.inventory])
 
-        return f'{name}\n{inventory_header}\n{inventory_string}'
+        return f'{name}{inventory_header}{inventory_string}'
 
     def take(self, item):
         if item in self.room.items:

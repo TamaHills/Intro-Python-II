@@ -1,7 +1,7 @@
 import os
 import sys
 from room import Room
-from item import Item
+from item import Item, Win_Item
 from player import Player
 from colors import BLUE, GREEN, RED, BOLD, UNDERLINE, END
 
