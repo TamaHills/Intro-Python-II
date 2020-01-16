@@ -2,7 +2,7 @@
 # description attributes.
 from textwrap import fill
 
-from colors import GREEN, RED, BOLD, UNDERLINE, END
+from colors import GREEN, RED, BOLD, UNDERLINE, BRIGHT, END
 
 class Room:
     def __init__(self, name, desc, items = []):
@@ -16,12 +16,12 @@ class Room:
         self.items = items
 
     def __repr__(self):
-        location = f'location: {BOLD}{self.name}{END}'
+        location = f'location: {BOLD}{BRIGHT}{self.name}{END}'
         desc = f'{GREEN}{fill(self.desc)}{END}\n'
         info_string = f'{location}\n{desc}\n'
 
         item_header = f'{BOLD}{UNDERLINE}Items:{END}\n'
-        items_string = str().join([ f'{item}' for item in self.items])
+        items_string = str().join([ f'  *{item}' for item in self.items])
         
         return f'{info_string}{item_header}{items_string}'
 
@@ -31,4 +31,10 @@ class Room:
         if new_room == self:
             print(f"{RED}{BOLD}\nYOU CAN'T GO THAT DIRECTION\n{END}")
         
-        return new_room 
+        return new_room
+    
+    def item_names(self):
+        return [item.name for item in self.items] 
+        
+    def hasitem(self, item_name):
+        return item_name in self.item_names()
